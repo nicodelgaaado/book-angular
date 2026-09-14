@@ -1,1 +1,66 @@
-/* You can add global styles to this file, and also import other style files */
+/* Estilos globales — mejora moderada */
+
+:root {
+  --bg: #f7f8f7;
+  --surface: #ffffff;
+  --text: #1c2420;
+  --muted: #5f6f66;
+  --border: #e3e8e4;
+  --primary: #166534;
+  --primary-dark: #14532d;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1 {
+  margin: 0 0 0.75rem;
+  color: var(--primary);
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+h3 {
+  margin: 1rem 0 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+p {
+  margin: 0.5rem 0;
+  color: inherit;
+}
+
+a {
+  color: var(--primary);
+}
+
+img {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

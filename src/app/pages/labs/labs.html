@@ -1,0 +1,23 @@
+<h1>Clase de Frameworks Frontend con Typescript</h1>
+<p class="subtitle">Interpolación, eventos y two-way binding con datos en vivo.</p>
+
+<section class="card">
+  <h2>{{ name }}</h2>
+  <p>{{ 3 + 5 }}</p>
+  <p>Edad: {{ age }}</p>
+  <p>Correo: {{ email }}</p>
+  <h3>{{'Hola'.repeat(3)}}</h3>
+</section>
+
+<section class="card">
+  <button type="button" (click)="showSumAlert()">Sumar números</button>
+  <img src="https://placehold.co/800x150" alt="Imagen placeholder" width="800" height="150">
+</section>
+
+<section class="card">
+  <label [for]="nombreCampo">Nombre</label>
+  <input type="text" [id]="nombreCampo" [name]="nombreCampo" [(ngModel)]="nombreValor" placeholder="Escribe tu nombre">
+  @if (nombreValor) {
+    <p class="preview">Hola, {{ nombreValor }}</p>
+  }
+</section>
