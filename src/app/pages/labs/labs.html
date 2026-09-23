@@ -16,7 +16,7 @@
 
 <section class="card">
   <label [for]="nombreCampo">Nombre</label>
-  <input type="text" [id]="nombreCampo" [name]="nombreCampo" [(ngModel)]="nombreValor" placeholder="Escribe tu nombre">
+  <input type="text" [id]="nombreCampo" [name]="nombreCampo" [(ngModel)]="nombreValor" (keyup.enter)="showNameAlert()" placeholder="Escribe tu nombre">
   @if (nombreValor) {
     <p class="preview">Hola, {{ nombreValor }}</p>
   }

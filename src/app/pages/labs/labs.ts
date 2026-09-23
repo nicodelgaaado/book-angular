@@ -19,4 +19,12 @@ export class Labs {
   protected showSumAlert(): void {
     alert(`La suma es: ${this.number1 + this.number2}`);
   }
+
+  protected showNameAlert(): void {
+    const nombre = this.nombreValor.trim();
+
+    if (nombre) {
+      alert(`Hola, ${nombre}`);
+    }
+  }
 }
