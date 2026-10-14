@@ -119,6 +119,9 @@ export class TodoList implements OnInit {
     priority: 'medium',
   };
 
+  // For toggling long descriptions gracefully
+  public expandedDescriptionId: number | null = null;
+
   ngOnInit(): void {
     if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
       return;
@@ -236,6 +239,10 @@ export class TodoList implements OnInit {
       this.cancelEdit();
     }
 
+    if (this.expandedDescriptionId === id) {
+      this.expandedDescriptionId = null;
+    }
+
     this.saveTodos();
   }
 
@@ -261,6 +268,15 @@ export class TodoList implements OnInit {
     );
 
     this.saveTodos();
+  }
+
+  // Description expand/collapse helpers
+  isDescriptionExpanded(id: number): boolean {
+    return this.expandedDescriptionId === id;
+  }
+
+  toggleDescription(id: number): void {
+    this.expandedDescriptionId = this.expandedDescriptionId === id ? null : id;
   }
 
   trackById(_index: number, todo: Todo) {
