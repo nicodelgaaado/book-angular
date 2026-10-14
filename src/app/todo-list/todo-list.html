@@ -10,31 +10,23 @@
 </header>
 
 <main class="container">
-
-  <!-- =========================
-         RESUMEN DE TAREAS
-    ========================== -->
   <section class="summary">
     <article class="summary-card">
-      <span class="summary-number"> {{todos().length}} </span>
+      <span class="summary-number">{{ totalCount }}</span>
       <span class="summary-label">Total</span>
     </article>
 
     <article class="summary-card">
-      <span class="summary-number">3</span>
+      <span class="summary-number">{{ pendingCount }}</span>
       <span class="summary-label">Pendientes</span>
     </article>
 
     <article class="summary-card">
-      <span class="summary-number">1</span>
+      <span class="summary-number">{{ completedCount }}</span>
       <span class="summary-label">Completadas</span>
     </article>
   </section>
 
-
-  <!-- =========================
-         FORMULARIO
-    ========================== -->
   <section class="panel">
     <div class="section-heading">
       <div>
@@ -43,40 +35,32 @@
       </div>
     </div>
 
-    <!--
-        Por ahora este formulario es estático.
-        Más adelante Angular / React controlarán sus valores y eventos.
-      -->
-    <form class="task-form">
+    <form class="task-form" (ngSubmit)="addTodo()">
       <div class="form-group form-group-main">
         <label for="taskTitle">Título</label>
         <input
-        id="taskTitle"
-        name="taskTitle"
-        type="text"
-        placeholder="Ej. Preparar presentación"
-        (change)="onChangeTodo($event)">
+          id="taskTitle"
+          name="taskTitle"
+          type="text"
+          placeholder="Ej. Preparar presentación"
+          [value]="tempTodo.title"
+          (input)="onChangeTodo($event)"
+        />
       </div>
 
       <div class="form-group">
         <label for="priority">Prioridad</label>
-        <select id="priority" name="priority" (change)="onChangePriority($event)">
+        <select id="priority" name="priority" [value]="tempTodo.priority" (change)="onChangePriority($event)">
           <option value="low">Baja</option>
-          <option value="medium" selected>Media</option>
+          <option value="medium">Media</option>
           <option value="high">Alta</option>
         </select>
       </div>
 
-      <button class="btn btn-primary" type="button" (click)="addTodo()">
-        + Agregar tarea
-      </button>
+      <button class="btn btn-primary" type="submit">+ Agregar tarea</button>
     </form>
   </section>
 
-
-  <!-- =========================
-         FILTROS
-    ========================== -->
   <section class="tasks-section">
     <div class="tasks-header">
       <div>
@@ -85,143 +69,76 @@
       </div>
 
       <div class="filters" aria-label="Filtros de tareas">
-        <button class="filter active" type="button">Todas</button>
-        <button class="filter" type="button">Pendientes</button>
-        <button class="filter" type="button">Completadas</button>
+        <button class="filter" [class.active]="filter === 'all'" type="button" (click)="setFilter('all')">Todas</button>
+        <button class="filter" [class.active]="filter === 'pending'" type="button" (click)="setFilter('pending')">Pendientes</button>
+        <button class="filter" [class.active]="filter === 'completed'" type="button" (click)="setFilter('completed')">Completadas</button>
       </div>
     </div>
 
-
-    <!-- =========================
-           LISTADO DE TAREAS
-      ========================== -->
     <div class="task-list">
-
       <article
         class="task-card"
-        *ngFor="let todo of todos(); index as i"
+        *ngFor="let todo of filteredTodos(); trackBy: todo?.id"
         [ngClass]="todo.isCompleted ? 'completed' : ''"
       >
         <div class="task-check">
           <input
-          type="checkbox"
-          id="task-{{i}}"
-          [checked]="todo.isCompleted"
-          (change)="onChangeCompleted($event, todo)">
+            type="checkbox"
+            [id]="'task-' + todo.id"
+            [checked]="todo.isCompleted"
+            (change)="onChangeCompleted($event, todo)"
+          />
         </div>
 
         <div class="task-content">
-          <div class="task-top">
-            <label for="task-1" class="task-title">
-              {{todo.title}}
+          <div *ngIf="editingId !== todo.id; else editMode" class="task-top">
+            <label [for]="'task-' + todo.id" class="task-title">
+              {{ todo.title }}
             </label>
-            <span
-              class="priority"
-              [ngClass]="setColorPriority(todo.priority)">
-              {{todo.priority === 'low' ? 'Baja' : todo.priority === 'medium' ? 'Media' : 'Alta'}}
+            <span class="priority" [ngClass]="setColorPriority(todo.priority)">
+              {{ todo.priority === 'low' ? 'Baja' : todo.priority === 'medium' ? 'Media' : 'Alta' }}
             </span>
           </div>
 
-          <p class="task-description">
-            {{todo.description}}
+          <ng-template #editMode>
+            <div class="edit-row">
+              <input
+                class="form-control-inline"
+                type="text"
+                [(ngModel)]="editTodo.title"
+                [ngModelOptions]="{ updateOn: 'change' }"
+              />
+              <select class="form-select-inline" [(ngModel)]="editTodo.priority">
+                <option value="low">Baja</option>
+                <option value="medium">Media</option>
+                <option value="high">Alta</option>
+              </select>
+            </div>
+          </ng-template>
+
+          <p class="task-description" *ngIf="editingId !== todo.id">
+            {{ todo.description || 'Sin descripción adicional.' }}
           </p>
 
-          <span class="task-date">Entrega: {{todo.dueDate}}</span>
+          <span class="task-date" *ngIf="editingId !== todo.id">
+            Entrega: {{ todo.dueDate || 'Sin fecha' }}
+          </span>
         </div>
 
         <div class="task-actions">
-          <button class="icon-btn" type="button" aria-label="Editar tarea">
-            Editar
-          </button>
-          <button class="icon-btn danger" type="button" aria-label="Eliminar tarea">
-            Eliminar
-          </button>
+          <ng-container *ngIf="editingId === todo.id; else defaultActions">
+            <button class="icon-btn" type="button" (click)="saveEdit()">Guardar</button>
+            <button class="icon-btn danger" type="button" (click)="cancelEdit()">Cancelar</button>
+          </ng-container>
+
+          <ng-template #defaultActions>
+            <button class="icon-btn" type="button" aria-label="Editar tarea" (click)="startEdit(todo)">Editar</button>
+            <button class="icon-btn danger" type="button" aria-label="Eliminar tarea" (click)="deleteTodo(todo.id)">Eliminar</button>
+          </ng-template>
         </div>
       </article>
-
-      <!--
-      <article class="task-card">
-        <div class="task-check">
-          <input type="checkbox" id="task-2">
-        </div>
-
-        <div class="task-content">
-          <div class="task-top">
-            <label for="task-2" class="task-title">
-              Revisar proyecto final
-            </label>
-            <span class="priority priority-medium">Media</span>
-          </div>
-
-          <p class="task-description">
-            Verificar avances y observaciones pendientes.
-          </p>
-
-          <span class="task-date">Entrega: 26 de septiembre</span>
-        </div>
-
-        <div class="task-actions">
-          <button class="icon-btn" type="button">Editar</button>
-          <button class="icon-btn danger" type="button">Eliminar</button>
-        </div>
-      </article>
-
-
-      <article class="task-card">
-        <div class="task-check">
-          <input type="checkbox" id="task-3">
-        </div>
-
-        <div class="task-content">
-          <div class="task-top">
-            <label for="task-3" class="task-title">
-              Actualizar documentación
-            </label>
-            <span class="priority priority-low">Baja</span>
-          </div>
-
-          <p class="task-description">
-            Agregar instrucciones de instalación y ejecución del proyecto.
-          </p>
-
-          <span class="task-date">Entrega: 30 de septiembre</span>
-        </div>
-
-        <div class="task-actions">
-          <button class="icon-btn" type="button">Editar</button>
-          <button class="icon-btn danger" type="button">Eliminar</button>
-        </div>
-      </article>-->
-
-      <article class="task-card completed">
-        <div class="task-check">
-          <input type="checkbox" id="task-4" checked>
-        </div>
-
-        <div class="task-content">
-          <div class="task-top">
-            <label for="task-4" class="task-title">
-              Crear repositorio de TodoTask
-            </label>
-            <span class="priority priority-medium">Media</span>
-          </div>
-
-          <p class="task-description">
-            Crear la estructura inicial del proyecto.
-          </p>
-
-          <span class="task-date">Completada</span>
-        </div>
-
-        <div class="task-actions">
-          <button class="icon-btn" type="button">Editar</button>
-          <button class="icon-btn danger" type="button">Eliminar</button>
-        </div>
-      </article>
-
     </div>
   </section>
-
 </main>
 
 <footer class="app-footer">

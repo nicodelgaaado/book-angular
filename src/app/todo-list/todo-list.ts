@@ -1,14 +1,17 @@
-import { Component, signal } from '@angular/core';
-import { Todo } from '../models/todo.model';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Todo } from '../models/todo.model';
+
+type TodoFilter = 'all' | 'pending' | 'completed';
 
 @Component({
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   selector: 'app-todo-list',
   styleUrl: './todo-list.scss',
   templateUrl: './todo-list.html',
 })
-export class TodoList {
+export class TodoList implements OnInit {
   public todos = signal<Todo[]>([
     {
       id: 1,
@@ -104,57 +107,142 @@ export class TodoList {
 
   public tempTodo = {
     title: '',
-    priority: '',
+    priority: 'medium',
   };
 
-  constructor() {
-    // No usar localStorage en el constructor cuando el entorno puede no tener window.
-  }
+  public filter: TodoFilter = 'all';
+  public editingId: number | null = null;
+  public editTodo = {
+    title: '',
+    priority: 'medium',
+  };
 
-  ngOnInit() {
-    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-      try {
-        const savedTodos = window.localStorage.getItem('todos');
-        if (savedTodos) {
-          this.todos.set(JSON.parse(savedTodos));
-        } else {
-          window.localStorage.setItem('todos', JSON.stringify(this.todos()));
+  ngOnInit(): void {
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      const savedTodos = window.localStorage.getItem('todos');
+      if (savedTodos) {
+        const parsedTodos = JSON.parse(savedTodos) as Todo[];
+        if (Array.isArray(parsedTodos) && parsedTodos.length > 0) {
+          this.todos.set(parsedTodos);
+          return;
         }
-      } catch (error) {
-        console.warn('No se pudo acceder a localStorage:', error);
       }
+      this.saveTodos();
+    } catch (error) {
+      console.warn('No se pudo acceder a localStorage:', error);
     }
   }
 
+  get totalCount(): number {
+    return this.todos().length;
+  }
+
+  get pendingCount(): number {
+    return this.todos().filter((todo) => !todo.isCompleted).length;
+  }
+
+  get completedCount(): number {
+    return this.todos().filter((todo) => todo.isCompleted).length;
+  }
+
+  filteredTodos(): Todo[] {
+    if (this.filter === 'pending') {
+      return this.todos().filter((todo) => !todo.isCompleted);
+    }
+
+    if (this.filter === 'completed') {
+      return this.todos().filter((todo) => todo.isCompleted);
+    }
+
+    return this.todos();
+  }
+
+  setFilter(filter: TodoFilter) {
+    this.filter = filter;
+  }
+
   addTodo() {
+    const title = this.tempTodo.title.trim();
+    if (!title) {
+      return;
+    }
+
     const newTodo: Todo = {
-      id: this.todos().length + 1,
-      title: this.tempTodo.title,
+      id: Date.now() + Math.floor(Math.random() * 1000),
+      title,
       description: '',
       dueDate: '',
       category: 'Personal',
-      priority: this.tempTodo.priority,
+      priority: this.tempTodo.priority || 'medium',
       isCompleted: false,
     };
 
-    console.log('.:: New Todo:', newTodo);
     this.todos.update((todos) => [...todos, newTodo]);
+    this.tempTodo = { title: '', priority: 'medium' };
     this.saveTodos();
   }
 
   onChangeTodo(event: Event) {
     const input = event.target as HTMLInputElement;
-    const value = input.value;
-    this.tempTodo.title = value;
-    console.log(value);
-    // this.addTodo(value);
+    this.tempTodo.title = input.value;
   }
 
   onChangePriority(event: Event) {
     const select = event.target as HTMLSelectElement;
-    const value = select.value;
-    this.tempTodo.priority = value;
-    console.log(value);
+    this.tempTodo.priority = select.value;
+  }
+
+  startEdit(todo: Todo) {
+    this.editingId = todo.id;
+    this.editTodo = {
+      title: todo.title,
+      priority: todo.priority,
+    };
+  }
+
+  cancelEdit() {
+    this.editingId = null;
+    this.editTodo = { title: '', priority: 'medium' };
+  }
+
+  saveEdit() {
+    if (this.editingId === null) {
+      return;
+    }
+
+    const title = this.editTodo.title.trim();
+    if (!title) {
+      return;
+    }
+
+    this.todos.update((todos) =>
+      todos.map((todo) =>
+        todo.id === this.editingId
+          ? {
+              ...todo,
+              title,
+              priority: this.editTodo.priority || 'medium',
+            }
+          : todo
+      )
+    );
+
+    this.cancelEdit();
+    this.saveTodos();
+  }
+
+  deleteTodo(id: number) {
+    this.todos.update((todos) => todos.filter((todo) => todo.id !== id));
+
+    if (this.editingId === id) {
+      this.cancelEdit();
+    }
+
+    this.saveTodos();
   }
 
   setColorPriority(priority: string) {
@@ -173,18 +261,25 @@ export class TodoList {
   onChangeCompleted(event: Event, todo: Todo) {
     const checkbox = event.target as HTMLInputElement;
     const isChecked = checkbox.checked;
-    todo.isCompleted = isChecked;
-    console.log(`Tarea "${todo.title}" completada: ${isChecked}`);
+
+    this.todos.update((todos) =>
+      todos.map((item) =>
+        item.id === todo.id ? { ...item, isCompleted: isChecked } : item
+      )
+    );
+
     this.saveTodos();
   }
 
   private saveTodos() {
-    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-      try {
-        window.localStorage.setItem('todos', JSON.stringify(this.todos()));
-      } catch (error) {
-        console.warn('No se pudo guardar en localStorage:', error);
-      }
+    if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem('todos', JSON.stringify(this.todos()));
+    } catch (error) {
+      console.warn('No se pudo guardar en localStorage:', error);
     }
   }
 }
