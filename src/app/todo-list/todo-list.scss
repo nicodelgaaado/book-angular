@@ -41,7 +41,8 @@ body {
 
 button,
 input,
-select {
+select,
+textarea {
   font: inherit;
 }
 
@@ -162,7 +163,8 @@ button {
 }
 
 .form-group input,
-.form-group select {
+.form-group select,
+.form-group textarea {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
@@ -173,8 +175,13 @@ button {
   outline: none;
 }
 
+.form-group textarea {
+  min-height: 60px;
+}
+
 .form-group input:focus,
-.form-group select:focus {
+.form-group select:focus,
+.form-group textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-soft);
 }
@@ -308,11 +315,21 @@ button {
 }
 
 .priority {
-  display: inline-block;
-  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
   border-radius: 999px;
   font-size: 0.72rem;
   font-weight: 700;
+}
+
+.priority::before {
+  content: '';
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
 }
 
 .priority-high {
@@ -320,14 +337,26 @@ button {
   color: var(--high);
 }
 
+.priority-high::before {
+  background: var(--high);
+}
+
 .priority-medium {
   background: var(--medium-bg);
   color: var(--medium);
 }
 
+.priority-medium::before {
+  background: var(--medium);
+}
+
 .priority-low {
   background: var(--low-bg);
   color: var(--low);
+}
+
+.priority-low::before {
+  background: var(--low);
 }
 
 .task-actions {

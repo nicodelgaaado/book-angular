@@ -43,14 +43,24 @@
           name="taskTitle"
           type="text"
           placeholder="Ej. Preparar presentación"
-          [value]="tempTodo.title"
-          (input)="onChangeTodo($event)"
+          [(ngModel)]="tempTodo.title"
         />
       </div>
 
       <div class="form-group">
+        <label for="taskDescription">Descripción</label>
+        <textarea
+          id="taskDescription"
+          name="taskDescription"
+          placeholder="Opcional: Detalles de la tarea"
+          rows="2"
+          [(ngModel)]="tempTodo.description"
+        ></textarea>
+      </div>
+
+      <div class="form-group">
         <label for="priority">Prioridad</label>
-        <select id="priority" name="priority" [value]="tempTodo.priority" (change)="onChangePriority($event)">
+        <select id="priority" name="taskPriority" [(ngModel)]="tempTodo.priority">
           <option value="low">Baja</option>
           <option value="medium">Media</option>
           <option value="high">Alta</option>
@@ -105,15 +115,22 @@
               <input
                 class="form-control-inline"
                 type="text"
+                name="editTitle{{todo.id}}"
                 [(ngModel)]="editTodo.title"
                 [ngModelOptions]="{ updateOn: 'change' }"
               />
-              <select class="form-select-inline" [(ngModel)]="editTodo.priority">
+              <select class="form-select-inline" name="editPriority{{todo.id}}" [(ngModel)]="editTodo.priority">
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
                 <option value="high">Alta</option>
               </select>
             </div>
+            <textarea
+              class="form-control-inline"
+              name="editDescription{{todo.id}}"
+              rows="2"
+              [(ngModel)]="editTodo.description"
+            ></textarea>
           </ng-template>
 
           <p class="task-description" *ngIf="editingId !== todo.id">

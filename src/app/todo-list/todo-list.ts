@@ -107,6 +107,7 @@ export class TodoList implements OnInit {
 
   public tempTodo = {
     title: '',
+    description: '',
     priority: 'medium',
   };
 
@@ -114,6 +115,7 @@ export class TodoList implements OnInit {
   public editingId: number | null = null;
   public editTodo = {
     title: '',
+    description: '',
     priority: 'medium',
   };
 
@@ -174,7 +176,7 @@ export class TodoList implements OnInit {
     const newTodo: Todo = {
       id: Date.now() + Math.floor(Math.random() * 1000),
       title,
-      description: '',
+      description: this.tempTodo.description || '',
       dueDate: '',
       category: 'Personal',
       priority: this.tempTodo.priority || 'medium',
@@ -182,31 +184,22 @@ export class TodoList implements OnInit {
     };
 
     this.todos.update((todos) => [...todos, newTodo]);
-    this.tempTodo = { title: '', priority: 'medium' };
+    this.tempTodo = { title: '', description: '', priority: 'medium' };
     this.saveTodos();
-  }
-
-  onChangeTodo(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.tempTodo.title = input.value;
-  }
-
-  onChangePriority(event: Event) {
-    const select = event.target as HTMLSelectElement;
-    this.tempTodo.priority = select.value;
   }
 
   startEdit(todo: Todo) {
     this.editingId = todo.id;
     this.editTodo = {
       title: todo.title,
+      description: todo.description || '',
       priority: todo.priority,
     };
   }
 
   cancelEdit() {
     this.editingId = null;
-    this.editTodo = { title: '', priority: 'medium' };
+    this.editTodo = { title: '', description: '', priority: 'medium' };
   }
 
   saveEdit() {
@@ -225,6 +218,7 @@ export class TodoList implements OnInit {
           ? {
               ...todo,
               title,
+              description: this.editTodo.description || '',
               priority: this.editTodo.priority || 'medium',
             }
           : todo
@@ -263,9 +257,7 @@ export class TodoList implements OnInit {
     const isChecked = checkbox.checked;
 
     this.todos.update((todos) =>
-      todos.map((item) =>
-        item.id === todo.id ? { ...item, isCompleted: isChecked } : item
-      )
+      todos.map((item) => (item.id === todo.id ? { ...item, isCompleted: isChecked } : item))
     );
 
     this.saveTodos();
