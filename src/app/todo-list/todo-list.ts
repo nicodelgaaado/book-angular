@@ -271,6 +271,10 @@ export class TodoList implements OnInit {
     this.saveTodos();
   }
 
+  trackById(_index: number, todo: Todo) {
+    return todo.id;
+  }
+
   private saveTodos() {
     if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') {
       return;

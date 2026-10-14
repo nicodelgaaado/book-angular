@@ -78,7 +78,7 @@
     <div class="task-list">
       <article
         class="task-card"
-        *ngFor="let todo of filteredTodos(); trackBy: todo?.id"
+        *ngFor="let todo of filteredTodos(); trackBy: trackById"
         [ngClass]="todo.isCompleted ? 'completed' : ''"
       >
         <div class="task-check">
