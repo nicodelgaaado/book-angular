@@ -108,8 +108,22 @@ export class TodoList {
   };
 
   constructor() {
-    // Al cargar guardamos la lista de tareas en el localStorage
-    localStorage.setItem('todos', JSON.stringify(this.todos()));
+    // No usar localStorage en el constructor cuando el entorno puede no tener window.
+  }
+
+  ngOnInit() {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      try {
+        const savedTodos = window.localStorage.getItem('todos');
+        if (savedTodos) {
+          this.todos.set(JSON.parse(savedTodos));
+        } else {
+          window.localStorage.setItem('todos', JSON.stringify(this.todos()));
+        }
+      } catch (error) {
+        console.warn('No se pudo acceder a localStorage:', error);
+      }
+    }
   }
 
   addTodo() {
@@ -125,7 +139,7 @@ export class TodoList {
 
     console.log('.:: New Todo:', newTodo);
     this.todos.update((todos) => [...todos, newTodo]);
-    localStorage.setItem('todos', JSON.stringify(this.todos()));
+    this.saveTodos();
   }
 
   onChangeTodo(event: Event) {
@@ -156,11 +170,21 @@ export class TodoList {
     }
   }
 
-  onChangeCompleted(event:Event, todo: Todo) {
+  onChangeCompleted(event: Event, todo: Todo) {
     const checkbox = event.target as HTMLInputElement;
     const isChecked = checkbox.checked;
     todo.isCompleted = isChecked;
     console.log(`Tarea "${todo.title}" completada: ${isChecked}`);
-    localStorage.setItem('todos', JSON.stringify(this.todos()));
+    this.saveTodos();
+  }
+
+  private saveTodos() {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      try {
+        window.localStorage.setItem('todos', JSON.stringify(this.todos()));
+      } catch (error) {
+        console.warn('No se pudo guardar en localStorage:', error);
+      }
+    }
   }
 }
