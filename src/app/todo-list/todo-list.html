@@ -1,0 +1,123 @@
+<header class="app-header">
+  <div class="container header-content">
+    <div>
+      <h1>TodoTask</h1>
+      <p>Organiza tus tareas de forma sencilla.</p>
+    </div>
+
+    <span class="user-badge">IB</span>
+  </div>
+</header>
+
+<main class="container">
+  <section class="summary">
+    <article class="summary-card">
+      <span class="summary-number">{{ todos().length }}</span>
+      <span class="summary-label">Total</span>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-number">{{ todos().filter((todo) => !todo.isCompleted).length }}</span>
+      <span class="summary-label">Pendientes</span>
+    </article>
+
+    <article class="summary-card">
+      <span class="summary-number">{{ todos().filter((todo) => todo.isCompleted).length }}</span>
+      <span class="summary-label">Completadas</span>
+    </article>
+  </section>
+
+  <section class="panel">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Nueva tarea</span>
+        <h2>¿Qué necesitas hacer?</h2>
+      </div>
+    </div>
+
+    <form class="task-form">
+      <div class="form-group form-group-main">
+        <label for="taskTitle">Título</label>
+        <input
+          id="taskTitle"
+          name="taskTitle"
+          type="text"
+          placeholder="Ej. Preparar presentación"
+          [value]="tempTodo.title"
+          (change)="onChangeTodo($event)"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Prioridad</label>
+        <select id="priority" name="priority" [value]="tempTodo.priority || 'medium'" (change)="onChangePriority($event)">
+          <option value="low">Baja</option>
+          <option value="medium">Media</option>
+          <option value="high">Alta</option>
+        </select>
+      </div>
+
+      <button class="btn btn-primary" type="button" (click)="addTodo()">+ Agregar tarea</button>
+    </form>
+  </section>
+
+  <section class="tasks-section">
+    <div class="tasks-header">
+      <div>
+        <span class="eyebrow">Mis tareas</span>
+        <h2>Listado</h2>
+      </div>
+
+      <div class="filters" aria-label="Filtros de tareas">
+        <button class="filter active" type="button">Todas</button>
+        <button class="filter" type="button">Pendientes</button>
+        <button class="filter" type="button">Completadas</button>
+      </div>
+    </div>
+
+    <div class="task-list">
+      <article
+        class="task-card"
+        *ngFor="let todo of todos(); index as i"
+        [ngClass]="todo.isCompleted ? 'completed' : ''"
+      >
+        <div class="task-check">
+          <input
+            type="checkbox"
+            id="task-{{ i }}"
+            [checked]="todo.isCompleted"
+            (change)="onChangeCompleted($event, todo)"
+          />
+        </div>
+
+        <div class="task-content">
+          <div class="task-top">
+            <label [for]="'task-' + i" class="task-title">
+              {{ todo.title }}
+            </label>
+            <span class="priority" [ngClass]="setColorPriority(todo.priority)">
+              {{ todo.priority === 'low' ? 'Baja' : todo.priority === 'medium' ? 'Media' : 'Alta' }}
+            </span>
+          </div>
+
+          <p class="task-description">
+            {{ todo.description }}
+          </p>
+
+          <span class="task-date">Entrega: {{ todo.dueDate || 'Sin fecha' }}</span>
+        </div>
+
+        <div class="task-actions">
+          <button class="icon-btn" type="button" aria-label="Editar tarea">Editar</button>
+          <button class="icon-btn danger" type="button" aria-label="Eliminar tarea">Eliminar</button>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer class="app-footer">
+  <div class="container">
+    <p>TodoTask · Aplicación práctica del curso</p>
+  </div>
+</footer>
