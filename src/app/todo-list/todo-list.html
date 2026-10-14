@@ -131,9 +131,31 @@
             ></textarea>
           </ng-template>
 
-          <p class="task-description" *ngIf="editingId !== todo.id">
-            {{ todo.description || 'Sin descripción adicional.' }}
-          </p>
+          <div class="task-description-wrap" *ngIf="editingId !== todo.id">
+            <p
+              class="task-description"
+              [class.expanded]="isDescriptionExpanded(todo.id)"
+              [attr.id]="'desc-' + todo.id"
+            >
+              {{ todo.description || 'Sin descripción adicional.' }}
+            </p>
+
+            <div
+              class="fade-overlay"
+              *ngIf="!isDescriptionExpanded(todo.id) && todo.description && todo.description.length > 120"
+            ></div>
+
+            <button
+              type="button"
+              class="read-more-btn"
+              *ngIf="todo.description && todo.description.length > 120"
+              (click)="toggleDescription(todo.id)"
+              [attr.aria-expanded]="isDescriptionExpanded(todo.id)"
+              [attr.aria-controls]="'desc-' + todo.id"
+            >
+              {{ isDescriptionExpanded(todo.id) ? 'Mostrar menos' : 'Mostrar más' }}
+            </button>
+          </div>
 
           <span class="task-date" *ngIf="editingId !== todo.id">
             Entrega: {{ todo.dueDate || 'Sin fecha' }}

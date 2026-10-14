@@ -9,7 +9,7 @@
   --muted: #6b7280;
   --border: #e6eaec;
 
-  --primary: #167a3a; /* green brand */
+  --primary: #167a3a;
   --primary-dark: #12612f;
   --primary-soft: rgba(22, 122, 58, 0.08);
 
@@ -35,30 +35,25 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 
 .container { width: min(1100px, calc(100% - 48px)); margin: 0 auto; }
 
-/* header */
 .app-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 18px 0; }
 .header-content { display:flex; justify-content:space-between; align-items:center; }
 .app-header h1 { margin:0; font-size:1.15rem; }
 .app-header p { margin:4px 0 0; color:var(--muted); font-size:0.9rem; }
 .user-badge { width:44px; height:44px; border-radius:50%; display:grid; place-items:center; background:var(--primary); color:#fff; font-weight:700; }
 
-/* summary */
 .summary { display:grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 28px 0; }
 .summary-card { background: var(--surface); border:1px solid var(--border); border-radius: 12px; padding: 16px; box-shadow: var(--shadow-sm); }
 .summary-number { font-size:1.6rem; font-weight:700; display:block; }
 .summary-label { color:var(--muted); font-size:0.9rem; }
 
-/* Panels */
 .panel, .tasks-section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; box-shadow: var(--shadow-sm); }
 .panel { padding: 26px; margin-bottom: 18px; }
 .tasks-section { padding: 20px; }
 
-/* Section heading */
 .section-heading { margin-bottom: 14px; }
 .section-heading .eyebrow { color:var(--primary); font-weight:800; font-size:0.78rem; letter-spacing:0.08em; text-transform:uppercase; }
 .section-heading h2 { margin:8px 0 0; font-size:1.7rem; line-height:1.05; }
 
-/* Form layout (modern, responsive) */
 .task-form {
   display: grid;
   grid-template-columns: 1.9fr 1.3fr 0.7fr;
@@ -79,19 +74,16 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
   outline: none; border-color: var(--primary); box-shadow: 0 6px 20px rgba(22,122,58,0.08);
 }
 
-/* Primary CTA spans full width under the grid */
 .btn { border:0; border-radius:12px; padding:14px 18px; font-weight:700; font-size:1rem; grid-column: 1 / -1; }
 .btn-primary { background:var(--primary); color:#fff; box-shadow: var(--shadow-sm); }
 .btn-primary:hover { background: var(--primary-dark); box-shadow: var(--shadow-md); }
 
-/* Tasks header */
 .tasks-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:12px; }
 .tasks-header h2 { margin:4px 0 0; }
 .filters { display:flex; gap:8px; }
 .filter { padding:8px 12px; border-radius:999px; border:1px solid var(--border); background:transparent; color:var(--muted); font-weight:600; }
 .filter.active { background:var(--primary-soft); color:var(--primary); border-color: transparent; }
 
-/* Task list and cards */
 .task-list { display:flex; flex-direction:column; gap:12px; }
 .task-card { display:grid; grid-template-columns: auto 1fr auto; gap:14px; align-items:start; padding:16px; border-radius:12px; border:1px solid var(--border); transition: transform .12s ease, box-shadow .12s ease; }
 .task-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
@@ -99,15 +91,47 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 
 .task-top { display:flex; gap:12px; align-items:center; }
 .task-title { font-weight:700; font-size:1rem; }
-.task-description { margin:8px 0 0; color:var(--muted); font-size:0.95rem; }
+.task-description-wrap { position: relative; max-width: 100%; }
+.task-description {
+  margin: 8px 0 0;
+  color: var(--muted);
+  line-height: 1.45;
+  font-size: 0.95rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  transition: all 200ms ease;
+}
+.task-description.expanded {
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+.fade-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 42px;
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 85%);
+  pointer-events: none;
+}
+.read-more-btn {
+  background: transparent;
+  border: 0;
+  color: var(--primary);
+  font-weight: 700;
+  padding: 4px 0 0;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+.read-more-btn:hover { text-decoration: underline; }
 .task-date { display:block; margin-top:8px; font-size:0.84rem; color:var(--muted); }
 
-/* Inline edit styles */
 .edit-row { display:flex; gap:10px; align-items:center; }
 .form-control-inline, .form-select-inline { padding:10px 12px; border-radius:10px; border:1px solid var(--border); min-height:40px; }
 .form-control-inline { flex: 1 1 auto; }
 
-/* Priority tag - pill with colored dot */
 .priority { display:inline-flex; align-items:center; gap:10px; padding:6px 10px; border-radius:999px; font-weight:700; font-size:0.78rem; }
 .priority::before { content:''; width:10px; height:10px; border-radius:50%; display:inline-block; }
 .priority-high { background: var(--high-bg); color:var(--high); }
@@ -117,7 +141,6 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 .priority-low { background: var(--low-bg); color:var(--low); }
 .priority-low::before { background:var(--low); }
 
-/* Actions */
 .task-actions { display:flex; gap:8px; align-items:center; }
 .icon-btn { padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--muted); font-weight:600; }
 .icon-btn:hover { background:var(--primary-soft); color:var(--primary); border-color:transparent; }
@@ -126,7 +149,8 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
 .task-card.completed { opacity:0.78; }
 .task-card.completed .task-title { text-decoration:line-through; }
 
-/* Responsive adjustments - stack gracefully */
+.app-footer { padding: 0 0 30px; color: var(--muted); text-align: center; font-size: 0.85rem; }
+
 @media (max-width: 900px) {
   .task-form { grid-template-columns: 1fr 1fr; }
   .btn { grid-column: 1 / -1; }
@@ -137,4 +161,5 @@ body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Robo
   .task-form { grid-template-columns: 1fr; }
   .task-card { grid-template-columns: auto 1fr; }
   .tasks-header { flex-direction:column; align-items:flex-start; gap:8px; }
+  .fade-overlay { height: 34px; }
 }
