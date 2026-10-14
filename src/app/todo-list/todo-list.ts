@@ -1,6 +1,6 @@
 import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Todo } from '../models/todo.model';
+import { CommonModule } from '@angular/common';
 
 @Component({
   imports: [CommonModule],
@@ -108,38 +108,39 @@ export class TodoList {
   };
 
   constructor() {
+    // Al cargar guardamos la lista de tareas en el localStorage
     localStorage.setItem('todos', JSON.stringify(this.todos()));
   }
 
   addTodo() {
-    const title = this.tempTodo.title.trim();
-    if (!title) {
-      return;
-    }
-
     const newTodo: Todo = {
       id: this.todos().length + 1,
-      title,
+      title: this.tempTodo.title,
       description: '',
       dueDate: '',
       category: 'Personal',
-      priority: this.tempTodo.priority || 'medium',
+      priority: this.tempTodo.priority,
       isCompleted: false,
     };
 
+    console.log('.:: New Todo:', newTodo);
     this.todos.update((todos) => [...todos, newTodo]);
-    this.tempTodo = { title: '', priority: '' };
     localStorage.setItem('todos', JSON.stringify(this.todos()));
   }
 
   onChangeTodo(event: Event) {
     const input = event.target as HTMLInputElement;
-    this.tempTodo.title = input.value;
+    const value = input.value;
+    this.tempTodo.title = value;
+    console.log(value);
+    // this.addTodo(value);
   }
 
   onChangePriority(event: Event) {
     const select = event.target as HTMLSelectElement;
-    this.tempTodo.priority = select.value;
+    const value = select.value;
+    this.tempTodo.priority = value;
+    console.log(value);
   }
 
   setColorPriority(priority: string) {
@@ -155,9 +156,11 @@ export class TodoList {
     }
   }
 
-  onChangeCompleted(event: Event, todo: Todo) {
+  onChangeCompleted(event:Event, todo: Todo) {
     const checkbox = event.target as HTMLInputElement;
-    todo.isCompleted = checkbox.checked;
+    const isChecked = checkbox.checked;
+    todo.isCompleted = isChecked;
+    console.log(`Tarea "${todo.title}" completada: ${isChecked}`);
     localStorage.setItem('todos', JSON.stringify(this.todos()));
   }
 }

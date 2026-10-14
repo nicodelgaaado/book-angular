@@ -1,6 +1,6 @@
 /* =========================
    VARIABLES GENERALES
-========================== */
+========================= */
 :root {
   --background: #f5f7fb;
   --surface: #ffffff;
@@ -28,6 +28,10 @@
   --shadow: 0 8px 30px rgba(32, 36, 49, 0.07);
 }
 
+
+/* =========================
+   RESET BÁSICO
+========================= */
 * {
   box-sizing: border-box;
 }
@@ -54,6 +58,10 @@ button {
   margin: 0 auto;
 }
 
+
+/* =========================
+   HEADER
+========================= */
 .app-header {
   background: var(--surface);
   border-bottom: 1px solid var(--border);
@@ -87,6 +95,10 @@ button {
   font-weight: bold;
 }
 
+
+/* =========================
+   RESUMEN
+========================= */
 .summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -112,6 +124,10 @@ button {
   color: var(--muted);
 }
 
+
+/* =========================
+   PANELES Y TÍTULOS
+========================= */
 .panel,
 .tasks-section {
   background: var(--surface);
@@ -142,6 +158,10 @@ button {
   letter-spacing: 0.08em;
 }
 
+
+/* =========================
+   FORMULARIO
+========================= */
 .task-form {
   display: grid;
   grid-template-columns: 1fr 180px auto;
@@ -196,6 +216,10 @@ button {
   background: var(--primary-dark);
 }
 
+
+/* =========================
+   FILTROS
+========================= */
 .tasks-header {
   display: flex;
   justify-content: space-between;
@@ -225,6 +249,10 @@ button {
   color: var(--primary);
 }
 
+
+/* =========================
+   TAREAS
+========================= */
 .task-list {
   display: flex;
   flex-direction: column;
@@ -283,6 +311,10 @@ button {
   color: var(--muted);
 }
 
+
+/* =========================
+   PRIORIDADES
+========================= */
 .priority {
   display: inline-block;
   padding: 4px 8px;
@@ -306,6 +338,10 @@ button {
   color: var(--low);
 }
 
+
+/* =========================
+   ACCIONES
+========================= */
 .task-actions {
   display: flex;
   gap: 8px;
@@ -331,6 +367,10 @@ button {
   border-color: var(--danger);
 }
 
+
+/* =========================
+   TAREA COMPLETADA
+========================= */
 .task-card.completed {
   background: #fafafa;
   opacity: 0.72;
@@ -340,6 +380,10 @@ button {
   text-decoration: line-through;
 }
 
+
+/* =========================
+   FOOTER
+========================= */
 .app-footer {
   padding: 0 0 30px;
   color: var(--muted);
@@ -347,6 +391,10 @@ button {
   font-size: 0.85rem;
 }
 
+
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 760px) {
   .summary {
     grid-template-columns: 1fr;
